@@ -22,8 +22,8 @@ class HomeHeroSection extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [
             colorScheme.onSurface.withValues(alpha: 0.02),
-            colorScheme.primary.withValues(alpha: 0.06),
-            colorScheme.tertiary.withValues(alpha: 0.04),
+            colorScheme.primary.withValues(alpha: 0.08),
+            colorScheme.secondary.withValues(alpha: 0.05),
           ],
         ),
       ),
@@ -41,16 +41,33 @@ class HomeHeroSection extends StatelessWidget {
           clipBehavior: Clip.none,
           children: [
             Positioned(
-              right: -36,
-              top: -30,
+              left: -22,
+              top: 18,
               child: Container(
-                width: 140,
-                height: 140,
+                width: 180,
+                height: 180,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      colorScheme.primary.withValues(alpha: 0.14),
+                      colorScheme.secondary.withValues(alpha: 0.12),
+                      colorScheme.secondary.withValues(alpha: 0),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              right: -28,
+              top: -24,
+              child: Container(
+                width: 160,
+                height: 160,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      colorScheme.primary.withValues(alpha: 0.16),
                       colorScheme.primary.withValues(alpha: 0),
                     ],
                   ),
@@ -126,27 +143,25 @@ class _IntroCopy extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          '5th Element',
-          style: textTheme.labelLarge?.copyWith(
-            color: colorScheme.onSurface.withValues(alpha: 0.6),
-            letterSpacing: 1.6,
-          ),
+        _EyebrowPill(
+          label: 'Personal time machine',
+          colorScheme: colorScheme,
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 16),
         Text(
-          'A personal time machine',
+          'Open a year and step inside it.',
           style: textTheme.displaySmall?.copyWith(
             fontWeight: FontWeight.w600,
-            height: 0.95,
+            height: 0.92,
+            letterSpacing: -0.2,
           ),
         ),
         const SizedBox(height: 14),
         Text(
-          'Return to a feeling, a place, or a version of yourself without losing the wonder.',
+          'Move through portals that trace your life, then anchor them to the world that existed when you arrived.',
           style: textTheme.bodyLarge?.copyWith(
             color: colorScheme.onSurface.withValues(alpha: 0.72),
-            height: 1.5,
+            height: 1.55,
           ),
         ),
         const SizedBox(height: 20),
@@ -159,6 +174,7 @@ class _IntroCopy extends StatelessWidget {
               label: portal.category.label,
               value: 'Selected lens',
             ),
+            const MetricChip(label: 'Cinematic', value: 'Flow'),
           ],
         ),
       ],
@@ -217,19 +233,32 @@ class FeaturedAccentCard extends StatelessWidget {
                       height: 1.4,
                     ),
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: 20),
               Row(
                 children: [
-                  Text(
-                    'Open the year',
-                    style: theme.textTheme.labelLarge?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.88),
-                        ),
-                  ),
+                  _MiniStat(label: 'Year', value: '${portal.year}'),
+                  const SizedBox(width: 12),
+                  _MiniStat(label: 'Mood', value: portal.category.label),
                   const Spacer(),
-                  Icon(
-                    Icons.arrow_outward_rounded,
-                    color: Colors.white.withValues(alpha: 0.9),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.18),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Open',
+                          style: theme.textTheme.labelLarge?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Icon(Icons.arrow_outward_rounded, color: Colors.white, size: 18),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -313,6 +342,78 @@ class MetricChip extends StatelessWidget {
             label,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
                   color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.66),
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _EyebrowPill extends StatelessWidget {
+  const _EyebrowPill({
+    required this.label,
+    required this.colorScheme,
+  });
+
+  final String label;
+  final ColorScheme colorScheme;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(999),
+        color: colorScheme.primary.withValues(alpha: 0.08),
+        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.12)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        child: Text(
+          label.toUpperCase(),
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                letterSpacing: 1.4,
+                fontWeight: FontWeight.w800,
+                color: colorScheme.primary,
+              ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MiniStat extends StatelessWidget {
+  const _MiniStat({
+    required this.label,
+    required this.value,
+  });
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: Colors.white.withValues(alpha: 0.8),
+                ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            value,
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
                 ),
           ),
         ],

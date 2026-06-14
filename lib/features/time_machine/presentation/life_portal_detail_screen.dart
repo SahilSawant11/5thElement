@@ -15,6 +15,10 @@ class LifePortalDetailScreen extends ConsumerWidget {
 
   final String portalId;
 
+  void _goToTimeline(BuildContext context) {
+    context.go('/timeline');
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final portal = ref.watch(lifePortalByIdProvider(portalId));
@@ -23,7 +27,7 @@ class LifePortalDetailScreen extends ConsumerWidget {
       return AppScaffold(
         appBar: AppBar(
           leading: IconButton(
-            onPressed: () => context.pop(),
+            onPressed: () => _goToTimeline(context),
             icon: const Icon(Icons.arrow_back_rounded),
           ),
         ),
@@ -34,7 +38,7 @@ class LifePortalDetailScreen extends ConsumerWidget {
     return AppScaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () => context.pop(),
+          onPressed: () => _goToTimeline(context),
           icon: const Icon(Icons.arrow_back_rounded),
         ),
         title: const Text('Portal'),

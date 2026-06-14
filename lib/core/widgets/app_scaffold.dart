@@ -35,6 +35,7 @@ class AppScaffold extends StatelessWidget {
         child: Stack(
           children: [
             const Positioned.fill(child: _AmbientBackground()),
+            const Positioned.fill(child: _BackdropVignette()),
             Scaffold(
               backgroundColor: Colors.transparent,
               appBar: appBar,
@@ -87,48 +88,35 @@ class _AmbientBackgroundState extends State<_AmbientBackground>
 
           return Stack(
             children: [
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      colorScheme.surface,
-                      colorScheme.primary.withValues(alpha: 0.05),
-                      colorScheme.secondary.withValues(alpha: 0.03),
-                    ],
-                  ),
-                ),
-                child: const SizedBox.expand(),
-              ),
+              const SizedBox.expand(),
               Positioned(
-                top: -100 + (t * 14),
-                left: -50 + (t * 10),
+                top: -110 + (t * 18),
+                left: -60 + (t * 14),
                 child: _GlowOrb(
-                  color: colorScheme.primary.withValues(alpha: 0.18),
-                  size: 260,
+                  color: colorScheme.primary.withValues(alpha: 0.14),
+                  size: 300,
                 ),
               ),
               Positioned(
-                top: 120 + (1 - t) * 18,
-                right: -80 + (t * 8),
+                top: 90 + (1 - t) * 22,
+                right: -90 + (t * 10),
                 child: _GlowOrb(
-                  color: colorScheme.secondary.withValues(alpha: 0.14),
-                  size: 200,
-                ),
-              ),
-              Positioned(
-                bottom: -100 + (1 - t) * 16,
-                left: 100 + (t * 12),
-                child: _GlowOrb(
-                  color: colorScheme.tertiary.withValues(alpha: 0.12),
+                  color: colorScheme.secondary.withValues(alpha: 0.12),
                   size: 240,
+                ),
+              ),
+              Positioned(
+                bottom: -120 + (1 - t) * 16,
+                left: 100 + (t * 16),
+                child: _GlowOrb(
+                  color: colorScheme.tertiary.withValues(alpha: 0.1),
+                  size: 280,
                 ),
               ),
               Positioned.fill(
                 child: CustomPaint(
                   painter: _AtmospherePainter(
-                    lineColor: colorScheme.onSurface.withValues(alpha: 0.035),
+                    lineColor: colorScheme.onSurface.withValues(alpha: 0.025),
                   ),
                 ),
               ),
@@ -155,6 +143,32 @@ class _GlowOrb extends StatelessWidget {
         shape: BoxShape.circle,
         gradient: RadialGradient(
           colors: [color, color.withValues(alpha: 0.0)],
+        ),
+      ),
+    );
+  }
+}
+
+class _BackdropVignette extends StatelessWidget {
+  const _BackdropVignette();
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return IgnorePointer(
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment.center,
+            radius: 1.3,
+            colors: [
+              Colors.transparent,
+              colorScheme.surface.withValues(alpha: 0.2),
+              colorScheme.surface.withValues(alpha: 0.68),
+            ],
+            stops: const [0.55, 0.82, 1.0],
+          ),
         ),
       ),
     );

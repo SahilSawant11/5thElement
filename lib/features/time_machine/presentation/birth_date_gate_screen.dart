@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/widgets/app_scaffold.dart';
 import '../application/birth_date_controller.dart';
 import 'birth_date_onboarding_screen.dart';
-import 'life_timeline_screen.dart';
+import 'birth_sky_screen.dart';
 
 class BirthDateGateScreen extends ConsumerWidget {
   const BirthDateGateScreen({super.key});
@@ -21,7 +21,7 @@ class BirthDateGateScreen extends ConsumerWidget {
           return const BirthDateOnboardingScreen();
         }
 
-        return const LifeTimelineScreen();
+        return const BirthSkyScreen();
       },
     );
   }

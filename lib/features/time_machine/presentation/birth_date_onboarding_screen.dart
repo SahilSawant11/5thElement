@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/widgets/app_scaffold.dart';
 import '../../../core/widgets/glass_panel.dart';
@@ -51,6 +52,9 @@ class _BirthDateOnboardingScreenState extends ConsumerState<BirthDateOnboardingS
     }
 
     await ref.read(birthDateControllerProvider.notifier).setBirthDate(selectedDate);
+    if (mounted) {
+      context.go('/sky');
+    }
   }
 
   @override
@@ -149,7 +153,7 @@ class _BirthDateOnboardingScreenState extends ConsumerState<BirthDateOnboardingS
                           const SizedBox(height: 12),
                           FilledButton(
                             onPressed: _selectedDate == null ? null : _continue,
-                            child: const Text('Open my timeline'),
+                            child: const Text('See the sky I was born under'),
                           ),
                         ],
                       ),

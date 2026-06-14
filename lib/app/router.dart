@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/time_machine/presentation/birth_date_gate_screen.dart';
+import '../features/time_machine/presentation/birth_sky_screen.dart';
 import '../features/time_machine/presentation/life_portal_detail_screen.dart';
+import '../features/time_machine/presentation/life_timeline_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -16,6 +18,25 @@ final routerProvider = Provider<GoRouter>((ref) {
           child: const BirthDateGateScreen(),
         ),
         routes: [
+          GoRoute(
+            path: 'sky',
+            pageBuilder: (context, state) => _fadeSlidePage(
+              key: state.pageKey,
+              child: const BirthSkyScreen(),
+            ),
+          ),
+          GoRoute(
+            path: 'world',
+            redirect: (context, state) => '/sky',
+          ),
+          GoRoute(
+            path: 'timeline',
+            pageBuilder: (context, state) => _fadeSlidePage(
+              key: state.pageKey,
+              child: const LifeTimelineScreen(),
+              begin: const Offset(0.04, 0.03),
+            ),
+          ),
           GoRoute(
             path: 'portal/:id',
             pageBuilder: (context, state) {
