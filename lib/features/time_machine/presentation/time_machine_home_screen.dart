@@ -70,7 +70,7 @@ class TimeMachineHomeScreen extends ConsumerWidget {
                     (context, index) {
                       return TimePortalCard(
                         portal: portals[index],
-                        onTap: () => context.go('/portal/${portals[index].id}'),
+                        onTap: () => context.push('/portal/${portals[index].id}'),
                       );
                     },
                     childCount: portals.length,

@@ -26,26 +26,18 @@ class AstronomyAtBirthRepository {
 
     try {
       final apod = await _fetchApod(apodDate, fallbackToLaunchDay: apodDate != normalized);
-      final moon = buildMoonSnapshot(normalized);
-
-      return AstronomySnapshot(
+      return buildAstronomySnapshot(
         birthDate: normalized,
-        observationDate: apodDate,
         apod: apod,
-        moon: moon,
-        seasonLabel: seasonFor(normalized),
-        weekdayLabel: weekdayLabel(normalized),
-        skyNote: skyNoteFor(normalized),
-        sourceLabel: 'NASA APOD',
         isLive: true,
+        sourceLabel: 'NASA APOD',
         notes: apod.isFallback
             ? 'Your exact birth date predates APOD, so we showed the launch-day sky archive.'
-            : 'Built from NASA APOD and a moon-phase calculation for your date.',
+            : 'Built from NASA APOD plus moon, daylight, and seasonal sky estimates.',
       );
-    } catch (error) {
-      return AstronomySnapshot(
+    } catch (_) {
+      return buildAstronomySnapshot(
         birthDate: normalized,
-        observationDate: apodDate,
         apod: ApodSnapshot(
           date: apodDate,
           title: 'Astronomy snapshot unavailable',
@@ -57,13 +49,9 @@ class AstronomyAtBirthRepository {
           credit: 'Local fallback',
           isFallback: true,
         ),
-        moon: buildMoonSnapshot(normalized),
-        seasonLabel: seasonFor(normalized),
-        weekdayLabel: weekdayLabel(normalized),
-        skyNote: skyNoteFor(normalized),
-        sourceLabel: 'Local fallback',
         isLive: false,
-        notes: error.toString(),
+        sourceLabel: 'Local fallback',
+        notes: 'Live APOD could not load, so the sky cards are using local estimates.',
       );
     }
   }

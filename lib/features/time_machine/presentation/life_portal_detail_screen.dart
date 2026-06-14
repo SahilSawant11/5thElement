@@ -16,6 +16,11 @@ class LifePortalDetailScreen extends ConsumerWidget {
   final String portalId;
 
   void _goToTimeline(BuildContext context) {
+    if (context.canPop()) {
+      context.pop();
+      return;
+    }
+
     context.go('/timeline');
   }
 

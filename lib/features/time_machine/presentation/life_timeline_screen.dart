@@ -79,7 +79,7 @@ class LifeTimelineScreen extends ConsumerWidget {
                           final portal = lifeSnapshot.portals[index];
                           return LifePortalCard(
                             portal: portal,
-                            onTap: () => context.go('/portal/${portal.id}'),
+                            onTap: () => context.push('/portal/${portal.id}'),
                           );
                         },
                         childCount: lifeSnapshot.portals.length,
