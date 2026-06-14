@@ -34,7 +34,7 @@ class AppScaffold extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            const _AmbientBackground(),
+            const Positioned.fill(child: _AmbientBackground()),
             Scaffold(
               backgroundColor: Colors.transparent,
               appBar: appBar,
@@ -55,32 +55,86 @@ class AppScaffold extends StatelessWidget {
   }
 }
 
-class _AmbientBackground extends StatelessWidget {
+class _AmbientBackground extends StatefulWidget {
   const _AmbientBackground();
+
+  @override
+  State<_AmbientBackground> createState() => _AmbientBackgroundState();
+}
+
+class _AmbientBackgroundState extends State<_AmbientBackground>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(seconds: 14),
+  )..repeat(reverse: true);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return IgnorePointer(
-      child: Stack(
-        children: [
-          Positioned(
-            top: -90,
-            left: -40,
-            child: _GlowOrb(color: colorScheme.primary.withValues(alpha: 0.16), size: 240),
-          ),
-          Positioned(
-            top: 140,
-            right: -70,
-            child: _GlowOrb(color: colorScheme.secondary.withValues(alpha: 0.13), size: 180),
-          ),
-          Positioned(
-            bottom: -80,
-            left: 120,
-            child: _GlowOrb(color: colorScheme.tertiary.withValues(alpha: 0.12), size: 220),
-          ),
-        ],
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          final t = Curves.easeInOut.transform(_controller.value);
+
+          return Stack(
+            children: [
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      colorScheme.surface,
+                      colorScheme.primary.withValues(alpha: 0.05),
+                      colorScheme.secondary.withValues(alpha: 0.03),
+                    ],
+                  ),
+                ),
+                child: const SizedBox.expand(),
+              ),
+              Positioned(
+                top: -100 + (t * 14),
+                left: -50 + (t * 10),
+                child: _GlowOrb(
+                  color: colorScheme.primary.withValues(alpha: 0.18),
+                  size: 260,
+                ),
+              ),
+              Positioned(
+                top: 120 + (1 - t) * 18,
+                right: -80 + (t * 8),
+                child: _GlowOrb(
+                  color: colorScheme.secondary.withValues(alpha: 0.14),
+                  size: 200,
+                ),
+              ),
+              Positioned(
+                bottom: -100 + (1 - t) * 16,
+                left: 100 + (t * 12),
+                child: _GlowOrb(
+                  color: colorScheme.tertiary.withValues(alpha: 0.12),
+                  size: 240,
+                ),
+              ),
+              Positioned.fill(
+                child: CustomPaint(
+                  painter: _AtmospherePainter(
+                    lineColor: colorScheme.onSurface.withValues(alpha: 0.035),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -104,5 +158,31 @@ class _GlowOrb extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _AtmospherePainter extends CustomPainter {
+  const _AtmospherePainter({required this.lineColor});
+
+  final Color lineColor;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = lineColor
+      ..strokeWidth = 1;
+
+    const spacing = 48.0;
+    for (var x = 0.0; x < size.width; x += spacing) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+    }
+    for (var y = 0.0; y < size.height; y += spacing) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _AtmospherePainter oldDelegate) {
+    return oldDelegate.lineColor != lineColor;
   }
 }

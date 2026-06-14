@@ -31,18 +31,18 @@ class GlassPanel extends StatelessWidget {
               end: Alignment.bottomRight,
               colors: [
                 colorScheme.surface.withValues(alpha: opacity),
-                colorScheme.surface.withValues(alpha: opacity * 0.82),
+                colorScheme.surface.withValues(alpha: opacity * 0.9),
               ],
             ),
             borderRadius: BorderRadius.circular(borderRadius),
             border: Border.all(
-              color: colorScheme.onSurface.withValues(alpha: 0.1),
+              color: colorScheme.onSurface.withValues(alpha: 0.09),
             ),
             boxShadow: [
               BoxShadow(
-                color: colorScheme.primary.withValues(alpha: 0.08),
-                blurRadius: 30,
-                offset: const Offset(0, 18),
+                color: colorScheme.primary.withValues(alpha: 0.1),
+                blurRadius: 36,
+                offset: const Offset(0, 20),
               ),
             ],
           ),
@@ -53,7 +53,7 @@ class GlassPanel extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.centerRight,
                 colors: [
-                  Colors.white.withValues(alpha: 0.16),
+                  Colors.white.withValues(alpha: 0.18),
                   Colors.white.withValues(alpha: 0.02),
                 ],
               ),

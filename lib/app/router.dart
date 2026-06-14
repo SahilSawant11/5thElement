@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -10,13 +11,20 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: '/',
-        builder: (context, state) => const BirthDateGateScreen(),
+        pageBuilder: (context, state) => _fadeSlidePage(
+          key: state.pageKey,
+          child: const BirthDateGateScreen(),
+        ),
         routes: [
           GoRoute(
             path: 'portal/:id',
-            builder: (context, state) {
+            pageBuilder: (context, state) {
               final id = state.pathParameters['id'] ?? '';
-              return LifePortalDetailScreen(portalId: id);
+              return _fadeSlidePage(
+                key: state.pageKey,
+                child: LifePortalDetailScreen(portalId: id),
+                begin: const Offset(0.06, 0.02),
+              );
             },
           ),
         ],
@@ -25,3 +33,34 @@ final routerProvider = Provider<GoRouter>((ref) {
     errorBuilder: (context, state) => const BirthDateGateScreen(),
   );
 });
+
+CustomTransitionPage<void> _fadeSlidePage({
+  required LocalKey key,
+  required Widget child,
+  Offset begin = const Offset(0.0, 0.03),
+}) {
+  return CustomTransitionPage<void>(
+    key: key,
+    transitionDuration: const Duration(milliseconds: 360),
+    reverseTransitionDuration: const Duration(milliseconds: 280),
+    child: child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final curve = CurvedAnimation(
+        parent: animation,
+        curve: Curves.easeOutCubic,
+        reverseCurve: Curves.easeInCubic,
+      );
+
+      return FadeTransition(
+        opacity: curve,
+        child: SlideTransition(
+          position: Tween<Offset>(
+            begin: begin,
+            end: Offset.zero,
+          ).animate(curve),
+          child: child,
+        ),
+      );
+    },
+  );
+}

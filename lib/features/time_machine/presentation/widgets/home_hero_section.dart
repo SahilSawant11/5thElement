@@ -23,62 +23,88 @@ class HomeHeroSection extends StatelessWidget {
           colors: [
             colorScheme.onSurface.withValues(alpha: 0.02),
             colorScheme.primary.withValues(alpha: 0.06),
+            colorScheme.tertiary.withValues(alpha: 0.04),
           ],
         ),
       ),
       child: TweenAnimationBuilder<double>(
-        tween: Tween(begin: 0.98, end: 1),
+        tween: Tween(begin: 0.975, end: 1),
         duration: const Duration(milliseconds: 420),
         curve: Curves.easeOutCubic,
         builder: (context, scale, child) {
-          return Transform.scale(scale: scale, child: child);
+          return Transform.translate(
+            offset: Offset(0, 10 * (1 - scale)),
+            child: Transform.scale(scale: scale, child: child),
+          );
         },
-          child: Padding(
-            padding: const EdgeInsets.all(28),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final isWide = constraints.maxWidth > 700;
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Positioned(
+              right: -36,
+              top: -30,
+              child: Container(
+                width: 140,
+                height: 140,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      colorScheme.primary.withValues(alpha: 0.14),
+                      colorScheme.primary.withValues(alpha: 0),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(28),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final isWide = constraints.maxWidth > 700;
 
-                if (isWide) {
-                  return Row(
+                  if (isWide) {
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 5,
+                          child: _IntroCopy(
+                            colorScheme: colorScheme,
+                            textTheme: textTheme,
+                            portal: portal,
+                          ),
+                        ),
+                        const SizedBox(width: 24),
+                        Expanded(
+                          flex: 3,
+                          child: FeaturedAccentCard(portal: portal),
+                        ),
+                      ],
+                    );
+                  }
+
+                  return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        flex: 5,
-                        child: _IntroCopy(
-                          colorScheme: colorScheme,
-                          textTheme: textTheme,
-                          portal: portal,
-                        ),
+                      _IntroCopy(
+                        colorScheme: colorScheme,
+                        textTheme: textTheme,
+                        portal: portal,
                       ),
-                      const SizedBox(width: 24),
-                      Expanded(
-                        flex: 3,
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
                         child: FeaturedAccentCard(portal: portal),
                       ),
                     ],
                   );
-                }
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _IntroCopy(
-                      colorScheme: colorScheme,
-                      textTheme: textTheme,
-                      portal: portal,
-                    ),
-                    const SizedBox(height: 24),
-                    SizedBox(
-                      width: double.infinity,
-                      child: FeaturedAccentCard(portal: portal),
-                    ),
-                  ],
-                );
-              },
+                },
+              ),
             ),
-          ),
+          ],
         ),
+      ),
     );
   }
 }
@@ -147,46 +173,90 @@ class FeaturedAccentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            portal.accent.withValues(alpha: 0.95),
-            portal.accent.withValues(alpha: 0.45),
-          ],
+    final theme = Theme.of(context);
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                portal.accent.withValues(alpha: 0.98),
+                portal.accent.withValues(alpha: 0.5),
+                portal.accent.withValues(alpha: 0.28),
+              ],
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Featured portal',
+                style: theme.textTheme.labelLarge?.copyWith(
+                      color: Colors.white.withValues(alpha: 0.82),
+                    ),
+              ),
+              const SizedBox(height: 18),
+              Text(
+                portal.title,
+                style: theme.textTheme.headlineMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+              const SizedBox(height: 14),
+              Text(
+                portal.highlight,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                      color: Colors.white.withValues(alpha: 0.92),
+                      height: 1.4,
+                    ),
+              ),
+              const SizedBox(height: 18),
+              Row(
+                children: [
+                  Text(
+                    'Open the year',
+                    style: theme.textTheme.labelLarge?.copyWith(
+                          color: Colors.white.withValues(alpha: 0.88),
+                        ),
+                  ),
+                  const Spacer(),
+                  Icon(
+                    Icons.arrow_outward_rounded,
+                    color: Colors.white.withValues(alpha: 0.9),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Featured portal',
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: Colors.white.withValues(alpha: 0.82),
+        Positioned(
+          right: -14,
+          top: -16,
+          child: Hero(
+            tag: 'featured-portal-${portal.id}',
+            child: Container(
+              width: 78,
+              height: 78,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    Colors.white.withValues(alpha: 0.96),
+                    Colors.white.withValues(alpha: 0.16),
+                  ],
                 ),
+              ),
+            ),
           ),
-          const SizedBox(height: 18),
-          Text(
-            portal.title,
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
-          ),
-          const SizedBox(height: 14),
-          Text(
-            portal.highlight,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Colors.white.withValues(alpha: 0.9),
-                  height: 1.4,
-                ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -233,7 +303,12 @@ class MetricChip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(value),
+          Text(
+            value,
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+          ),
           Text(
             label,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
