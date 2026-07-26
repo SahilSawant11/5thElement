@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -292,20 +290,28 @@ class _SkyHero extends StatelessWidget {
             ],
           );
 
-          final moonBadge = Container(
-            width: 170,
-            height: 170,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.18),
-                  blurRadius: 44,
-                  offset: const Offset(0, 16),
+          final moonBadge = GlassPanel(
+            padding: const EdgeInsets.all(18),
+            opacity: 0.6,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.nights_stay_rounded, color: theme.colorScheme.primary, size: 36),
+                const SizedBox(height: 10),
+                Text(
+                  snapshot.moon.phaseLabel,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  '${snapshot.moon.illuminationPercent}% lit',
+                  style: theme.textTheme.labelLarge?.copyWith(
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.68),
+                      ),
                 ),
               ],
             ),
-            child: _MoonVisual(snapshot: snapshot, size: 170),
           );
 
           if (isWide) {
@@ -358,145 +364,12 @@ class _MoonCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 18),
-          Center(
-            child: _MoonVisual(snapshot: snapshot, size: 204),
-          ),
-          const SizedBox(height: 18),
           _StatLine(label: 'Moon age', value: '${moon.ageDays} days'),
           _StatLine(label: 'Illumination', value: '${moon.illuminationPercent}%'),
           _StatLine(label: 'Season', value: snapshot.seasonLabel),
         ],
       ),
     );
-  }
-}
-
-class _MoonVisual extends StatelessWidget {
-  const _MoonVisual({
-    required this.snapshot,
-    required this.size,
-  });
-
-  final AstronomySnapshot snapshot;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final moon = snapshot.moon;
-    final phaseLabel = moon.phaseLabel.toLowerCase();
-    final isWaxing = phaseLabel.contains('waxing');
-    final isWaning = phaseLabel.contains('waning');
-    final isFull = phaseLabel.contains('full');
-    final isNew = phaseLabel.contains('new');
-    final darkness = 1 - (moon.illuminationPercent / 100).clamp(0.0, 1.0);
-    final shadowShift = size * 0.34 * darkness;
-
-    return SizedBox(
-      width: size,
-      height: size,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Container(
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: RadialGradient(
-                center: Alignment(-0.34, -0.34),
-                radius: 0.96,
-                colors: [
-                  Color(0xFFF4EEE2),
-                  Color(0xFFDDD4C1),
-                  Color(0xFFB9AE9B),
-                ],
-                stops: [0.0, 0.62, 1.0],
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Color(0x1F000000),
-                  blurRadius: 22,
-                  offset: Offset(0, 12),
-                ),
-              ],
-            ),
-          ),
-          if (!isFull)
-            Transform.translate(
-              offset: Offset(isNew ? 0 : (isWaxing ? -shadowShift : isWaning ? shadowShift : 0), 0),
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: theme.colorScheme.surface.withValues(alpha: 0.96),
-              ),
-            ),
-          ),
-          Positioned.fill(
-            child: IgnorePointer(
-              child: CustomPaint(
-                painter: _MoonTexturePainter(
-                  craterTone: Colors.black.withValues(alpha: 0.06),
-                  accentTone: Colors.black.withValues(alpha: 0.02),
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 14,
-            child: Column(
-              children: [
-                Text(
-                  moon.phaseEmoji == '◌' ? '●' : moon.phaseEmoji,
-                  style: theme.textTheme.headlineMedium?.copyWith(fontSize: size * 0.16),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  moon.phaseLabel,
-                  style: theme.textTheme.labelLarge?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.72),
-                      ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _MoonTexturePainter extends CustomPainter {
-  const _MoonTexturePainter({
-    required this.craterTone,
-    required this.accentTone,
-  });
-
-  final Color craterTone;
-  final Color accentTone;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = size.center(Offset.zero);
-    final radius = math.min(size.width, size.height) / 2;
-
-    final craterPaint = Paint()..color = craterTone;
-    final shadowPaint = Paint()..color = accentTone;
-
-    final craterOffsets = <Offset>[
-      Offset(center.dx - radius * 0.30, center.dy - radius * 0.18),
-      Offset(center.dx + radius * 0.16, center.dy - radius * 0.24),
-      Offset(center.dx - radius * 0.04, center.dy + radius * 0.05),
-      Offset(center.dx + radius * 0.22, center.dy + radius * 0.18),
-    ];
-
-    for (final offset in craterOffsets) {
-      canvas.drawCircle(offset, radius * 0.055, craterPaint);
-      canvas.drawCircle(offset.translate(radius * 0.018, radius * 0.01), radius * 0.022, shadowPaint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _MoonTexturePainter oldDelegate) {
-    return oldDelegate.craterTone != craterTone || oldDelegate.accentTone != accentTone;
   }
 }
 
